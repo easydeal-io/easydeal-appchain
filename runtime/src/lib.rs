@@ -29,7 +29,7 @@ pub use pallet_timestamp::Call as TimestampCall;
 pub use pallet_balances::Call as BalancesCall;
 pub use sp_runtime::{Permill, Perbill};
 pub use frame_support::{
-	construct_runtime, parameter_types, StorageValue,
+	construct_runtime, parameter_types, StorageValue, PalletId,
 	traits::{KeyOwnerProofSystem, Randomness},
 	weights::{
 		Weight, IdentityFee,
@@ -59,7 +59,11 @@ use beefy_primitives::{ecdsa::AuthorityId as BeefyId, ValidatorSet};
 use sp_runtime::traits::ConvertInto;
 
 /// Import the template pallet.
-pub use pallet_template;
+pub use pallet_info;
+
+pub use pallet_sign;
+
+pub use pallet_space;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -493,7 +497,7 @@ impl pallet_octopus_appchain::Config for Runtime {
 	type Assets = Assets;
 	type GracePeriod = GracePeriod;
 	type UnsignedPriority = UnsignedPriority;
-	const RELAY_CONTRACT: &'static [u8] = b"oct-relay.testnet";
+	const RELAY_CONTRACT: &'static [u8] = b"dev-oct-relay.testnet";
 }
 
 impl pallet_sudo::Config for Runtime {
@@ -501,9 +505,24 @@ impl pallet_sudo::Config for Runtime {
 	type Call = Call;
 }
 
-/// Configure the pallet-template in pallets/template.
-impl pallet_template::Config for Runtime {
+/// Configure the pallet-info in pallets/info.
+impl pallet_info::Config for Runtime {
 	type Event = Event;
+	type Currency = Balances;
+}
+
+impl pallet_space::Config for Runtime {
+	type Event = Event;
+}
+
+parameter_types! {
+	pub const SignPalletId: PalletId = PalletId(*b"py/signp");
+}
+
+impl pallet_sign::Config for Runtime {
+	type PalletId = SignPalletId;
+	type Event = Event;
+	type Currency = Balances;
 }
 
 parameter_types! {
@@ -651,8 +670,9 @@ construct_runtime!(
 		Beefy: pallet_beefy::{Pallet, Storage, Config<T>},
 		OctopusAppchain: pallet_octopus_appchain::{Pallet, Call, Storage, Config<T>, Event<T>, ValidateUnsigned},
 		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>},
-		// Include the custom logic from the pallet-template in the runtime.
-		TemplateModule: pallet_template::{Pallet, Call, Storage, Event<T>},
+		Info: pallet_info::{Pallet, Call, Storage, Event<T>},
+		Space: pallet_space::{Pallet, Call, Storage, Event<T>},
+		Sign: pallet_sign::{Pallet, Call, Storage, Event<T>},
 	}
 );
 
@@ -946,7 +966,6 @@ impl_runtime_apis! {
 			add_benchmark!(params, batches, frame_system, SystemBench::<Runtime>);
 			add_benchmark!(params, batches, pallet_balances, Balances);
 			add_benchmark!(params, batches, pallet_timestamp, Timestamp);
-			add_benchmark!(params, batches, pallet_template, TemplateModule);
 
 			if batches.is_empty() { return Err("Benchmark not found for this pallet.".into()) }
 			Ok(batches)
