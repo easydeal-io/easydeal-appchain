@@ -58,8 +58,8 @@ use frame_support::PalletId;
 use sp_runtime::traits::ConvertInto;
 use sp_runtime::traits::Keccak256;
 
-/// Import the template pallet.
-pub use pallet_template;
+/// Import the user pallet.
+pub use pallet_user;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -615,9 +615,17 @@ impl pallet_sudo::Config for Runtime {
 	type Call = Call;
 }
 
-/// Configure the pallet-template in pallets/template.
-impl pallet_template::Config for Runtime {
+parameter_types! {
+	pub const InviteCodeValidPeriod: BlockNumber = 3 * MINUTES;
+	pub const UserPalletId: PalletId = PalletId(*b"py/userp");
+}
+
+impl pallet_user::Config for Runtime {
+	type PalletId = UserPalletId;
+	type Currency = Balances;
 	type Event = Event;
+	type Randomness = RandomnessCollectiveFlip;
+	type InviteCodeValidPeriod = InviteCodeValidPeriod;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -644,8 +652,8 @@ construct_runtime!(
 		Mmr: pallet_mmr::{Pallet, Storage},
 		Beefy: pallet_beefy::{Pallet, Config<T>},
 		OctopusAppchain: pallet_octopus_appchain::{Pallet, Call, Storage, Config<T>, Event<T>, ValidateUnsigned},
-		// Include the custom logic from the pallet-template in the runtime.
-		TemplateModule: pallet_template::{Pallet, Call, Storage, Event<T>},
+		// Include the custom logic from the pallet-user in the runtime.
+		User: pallet_user::{Pallet, Call, Storage, Event<T>},
 	}
 );
 
@@ -930,7 +938,7 @@ impl_runtime_apis! {
 			add_benchmark!(params, batches, frame_system, SystemBench::<Runtime>);
 			add_benchmark!(params, batches, pallet_balances, Balances);
 			add_benchmark!(params, batches, pallet_timestamp, Timestamp);
-			add_benchmark!(params, batches, pallet_template, TemplateModule);
+			add_benchmark!(params, batches, pallet_user, UserModule);
 
 			if batches.is_empty() { return Err("Benchmark not found for this pallet.".into()) }
 			Ok(batches)

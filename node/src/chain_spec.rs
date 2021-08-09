@@ -1,4 +1,4 @@
-use appchain_barnacle_runtime::{
+use easydeal_runtime::{
 	AccountId, BabeConfig, BalancesConfig, GenesisConfig, GrandpaConfig, Signature, SudoConfig,
 	SystemConfig, WASM_BINARY,
 };
@@ -8,9 +8,9 @@ use sp_finality_grandpa::AuthorityId as GrandpaId;
 use sp_runtime::traits::{IdentifyAccount, Verify};
 
 use beefy_primitives::crypto::AuthorityId as BeefyId;
-use appchain_barnacle_runtime::BeefyConfig;
-use appchain_barnacle_runtime::OctopusAppchainConfig;
-use appchain_barnacle_runtime::{
+use easydeal_runtime::BeefyConfig;
+use easydeal_runtime::OctopusAppchainConfig;
+use easydeal_runtime::{
 	opaque::SessionKeys, Balance, ImOnlineConfig, SessionConfig, StakingConfig, DOLLARS,
 };
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
@@ -251,7 +251,7 @@ fn testnet_genesis(
 		sudo: SudoConfig { key: root_key },
 		babe: BabeConfig {
 			authorities: vec![],
-			epoch_config: Some(appchain_barnacle_runtime::BABE_GENESIS_EPOCH_CONFIG),
+			epoch_config: Some(easydeal_runtime::BABE_GENESIS_EPOCH_CONFIG),
 		},
 		im_online: ImOnlineConfig { keys: vec![] },
 		grandpa: GrandpaConfig { authorities: vec![] },

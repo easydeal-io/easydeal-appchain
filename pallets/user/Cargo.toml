@@ -1,10 +1,10 @@
 [package]
 authors = ['Substrate DevHub <https://github.com/substrate-developer-hub>']
-description = 'Substrate FRAME pallet template for defining custom runtime logic.'
+description = 'User pallet'
 edition = '2018'
 homepage = 'https://substrate.dev'
 license = 'Unlicense'
-name = 'pallet-template'
+name = 'pallet-user'
 publish = false
 repository = 'https://github.com/substrate-developer-hub/substrate-node-template/'
 version = '3.0.0-monthly-2021-08'
@@ -16,19 +16,25 @@ targets = ['x86_64-unknown-linux-gnu']
 [dev-dependencies.serde]
 version = '1.0.126'
 
-[dev-dependencies.sp-core]
+[dependencies.sp-io]
 default-features = false
 git = 'https://github.com/paritytech/substrate.git'
 tag = 'monthly-2021-08'
 version = '3.0.0'
 
-[dev-dependencies.sp-io]
+[dependencies.sp-core]
 default-features = false
 git = 'https://github.com/paritytech/substrate.git'
 tag = 'monthly-2021-08'
 version = '3.0.0'
 
-[dev-dependencies.sp-runtime]
+[dependencies.sp-std]
+default-features = false
+git = 'https://github.com/paritytech/substrate.git'
+tag = 'monthly-2021-08'
+version = '3.0.0'
+
+[dependencies.sp-runtime]
 default-features = false
 git = 'https://github.com/paritytech/substrate.git'
 tag = 'monthly-2021-08'
@@ -39,6 +45,14 @@ default-features = false
 features = ['derive']
 package = 'parity-scale-codec'
 version = '2.0.0'
+
+[dependencies.log]
+default-features = false
+version = '0.4.0'
+
+[dependencies.rand_chacha]
+default-features = false
+version = '0.2'
 
 [dependencies.frame-benchmarking]
 default-features = false
