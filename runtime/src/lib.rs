@@ -118,7 +118,7 @@ pub mod opaque {
 #[sp_version::runtime_version]
 pub const VERSION: RuntimeVersion = RuntimeVersion {
 	spec_name: create_runtime_str!("appchain"),
-	impl_name: create_runtime_str!("appchain-barnacle"),
+	impl_name: create_runtime_str!("easydeal"),
 	authoring_version: 1,
 	// The version of the runtime specification. A full node will not attempt to use its native
 	//   runtime in substitute for the on-chain Wasm runtime unless all of `spec_name`,
@@ -615,17 +615,30 @@ impl pallet_sudo::Config for Runtime {
 	type Call = Call;
 }
 
+pub struct UserCrypto;
+
+impl frame_system::offchain::AppCrypto<<Signature as Verify>::Signer, Signature>
+	for UserCrypto
+{
+	type RuntimeAppPublic = pallet_user::AuthorityId;
+	type GenericSignature = sp_core::sr25519::Signature;
+	type GenericPublic = sp_core::sr25519::Public;
+}
+
 parameter_types! {
 	pub const InviteCodeValidPeriod: BlockNumber = 3 * MINUTES;
 	pub const UserPalletId: PalletId = PalletId(*b"py/userp");
+	pub const UserUnsignedPriority: u64 = 1 << 20;
 }
 
 impl pallet_user::Config for Runtime {
+	type AuthorityId = UserCrypto;
 	type PalletId = UserPalletId;
 	type Currency = Balances;
 	type Event = Event;
 	type Randomness = RandomnessCollectiveFlip;
 	type InviteCodeValidPeriod = InviteCodeValidPeriod;
+	type UnsignedPriority = UserUnsignedPriority;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -653,7 +666,7 @@ construct_runtime!(
 		Beefy: pallet_beefy::{Pallet, Config<T>},
 		OctopusAppchain: pallet_octopus_appchain::{Pallet, Call, Storage, Config<T>, Event<T>, ValidateUnsigned},
 		// Include the custom logic from the pallet-user in the runtime.
-		User: pallet_user::{Pallet, Call, Storage, Event<T>},
+		User: pallet_user::{Pallet, Call, Storage, Event<T>, ValidateUnsigned},
 	}
 );
 

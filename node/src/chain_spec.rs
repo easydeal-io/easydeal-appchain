@@ -19,6 +19,8 @@ use pallet_staking::StakerStatus;
 use sp_consensus_babe::AuthorityId as BabeId;
 use sp_runtime::Perbill;
 
+use serde_json::json;
+
 // The URL for the telemetry server.
 // const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
 
@@ -101,7 +103,15 @@ pub fn development_config() -> Result<ChainSpec, String> {
 		// Protocol ID
 		None,
 		// Properties
-		None,
+		Some(
+			json!({
+				"tokenDecimals": 16,
+				"tokenSymbol": "ESD"
+			})
+			.as_object()
+            .expect("Provided valid json map")
+            .clone(),
+		),
 		// Extensions
 		None,
 	))
@@ -149,7 +159,15 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
 		// Protocol ID
 		None,
 		// Properties
-		None,
+		Some(
+			json!({
+				"tokenDecimals": 16,
+				"tokenSymbol": "ESD"
+			})
+			.as_object()
+            .expect("Provided valid json map")
+            .clone(),
+		),
 		// Extensions
 		None,
 	))
@@ -258,7 +276,7 @@ fn testnet_genesis(
 		beefy: BeefyConfig { authorities: vec![] },
 		octopus_appchain: OctopusAppchainConfig {
 			appchain_id: "".to_string(),
-			relay_contract: "dev-oct-relay.testnet".to_string(),
+			relay_contract: "dev-1628556396816-8582900".to_string(),
 			validators: initial_authorities.iter().map(|x| (x.0.clone(), x.6)).collect(),
 			asset_id_by_name: vec![("usdc.testnet".to_string(), 0)],
 		},

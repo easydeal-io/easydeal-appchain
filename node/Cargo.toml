@@ -24,6 +24,13 @@ version = '3.0.0'
 path = '../runtime'
 version = '3.0.0-monthly-2021-08'
 
+[dependencies.serde]
+version = '1.0.102'
+features = ['derive']
+
+[dependencies.serde_json]
+version = '1.0'
+
 [dependencies]
 jsonrpc-core = '15.1.0'
 structopt = '0.3.8'

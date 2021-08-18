@@ -88,7 +88,7 @@ pub fn new_partial(
 			telemetry.as_ref().map(|(_, telemetry)| telemetry.handle()),
 		)?;
 	let client = Arc::new(client);
-
+	
 	let telemetry = telemetry
 		.map(|(worker, telemetry)| {
 			task_manager.spawn_handle().spawn("telemetry", worker.run());
@@ -559,6 +559,7 @@ pub fn new_light_base(
 	}
 
 	if config.offchain_worker.enabled {
+
 		sc_service::build_offchain_workers(
 			&config,
 			task_manager.spawn_handle(),
